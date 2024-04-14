@@ -1,0 +1,101 @@
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+}
+
+
+.container h1 {
+    margin-right: 20px; /* Adjust margin as needed */
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+a {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;  
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
+}
+
+.main-content {
+    padding: 20px 0;
+}
+
+.charts-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.chart-container {
+    width: 48%;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.chart-container h2 {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    margin: 0;
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center;
+}
+
+.card {
+    width: 200px; /* Adjust width as needed */
+    height: 200px; /* Set height to match width for square shape */
+    background-color: #87CEEB;
+    border: 1px solid #87CEEB;
+    border-radius: 5px;
+    margin-right: 20px; /* Adjust margin between cards */
+    margin-bottom: 20px;
+    margin-left: 50px;
+    margin-top: 20px;
+    float: left; 
+    text-align: center;
+    box-sizing: border-box; /* Ensure padding and border are included in width */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card p {
+    margin: 0;
+    padding: 10px; /* Add padding inside each card */
+}

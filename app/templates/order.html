@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/orderStyles.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="/">Home</a></h1>
+            <h1><a href="{{ url_for('orders_analysis') }}">Order Analysis</a></h1>
+        </div>
+    </header>
+
+    <section class="main-content">
+        <div class="container">
+            <div class="charts-container">
+                <div class="chart-container">
+                    <h2>Orders Summary</h2>
+                    <!-- <canvas id="orderSummary" width="400" height="200"> -->
+                        <!-- <ul> -->
+                            {% for key, value in order_summary.items() %}
+                            <div class="card">
+                                <strong><h3>{{key}}</h3></strong><br></hr>
+                                {{value}}
+                            </div>
+                            <!-- <li>{{key}}: {{value}}</li> -->
+                            {% endfor %}
+                            <!-- <li>Total Orders</ul>
+                            <li>Total Completed Order</ul>
+                            <>Average Order Price</ul>
+                            <ul>Average Frieght Value</ul>
+                            <li>Average Delivery Time</ul> -->
+                        </ul>
+                    <!-- </canvas> -->
+                </div>
+
+                <div class="chart-container">
+                    <h2>Orders by Time of Day</h2>
+                    <canvas id="ordersTimeOfDay" width="400" height="300"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h2>Number of Orders per Year</h2>
+                    <canvas id="ordersChart" width="400" height="300"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h2>Order Status</h2>
+                    <canvas id="ordersStatusChart" width="400" height="300"></canvas>
+                </div>
+
+
+                <div class="chart-container">
+                    <h2>Late Deliveries</h2>
+                    <canvas id="lateDeliveries" width="400" height="200"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h2>Payment Types</h2>
+                    <canvas id="paymentTypes" width="400" height="200"></canvas>
+                </div>
+
+                
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; BI360</p>
+        </div>
+    </footer>
+
+    <!-- <script src="script.js"></script> -->
+    <!-- <script src="{{ url_for('static',filename='script.js') }}"> </script> -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    fetch('/orders_per_year')
+        .then(response => response.json())
+        .then(data => {
+            const years = Object.keys(data);
+            const orders = Object.values(data);
+
+            new Chart(document.getElementById('ordersChart'), {
+                type: 'bar',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Number of Orders',
+                        data: orders,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/orders_status')
+        .then(response => response.json())
+        .then(data => {
+            const status = Object.keys(data);
+            const percentage = Object.values(data);
+
+            new Chart(document.getElementById('ordersStatusChart'), {
+                type: 'bar',
+                data: {
+                    labels: status,
+                    datasets: [{
+                        label: 'Order Status',
+                        data: percentage,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/orders_time_per_day')
+        .then(response => response.json())
+        .then(data => {
+            const time = Object.keys(data);
+            const count = Object.values(data);
+
+            new Chart(document.getElementById('ordersTimeOfDay'), {
+                type: 'bar',
+                data: {
+                    labels: time,
+                    datasets: [{
+                        label: 'Orders by Time of the Day',
+                        data: count,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: 'rgb(255, 99, 132)'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/late_deliveries')
+        .then(response => response.json())
+        .then(data => {
+            const deliverStatus = Object.keys(data);
+            const deliveryPercentage = Object.values(data);
+        
+            var lateDeliveriesDataPie = {
+                labels: deliverStatus,
+                values: deliveryPercentage,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.5)',
+                ],
+                // borderWidth: 1
+                };
+        
+            new Chart(document.getElementById('lateDeliveries'), {
+                type: 'pie',
+                data: {
+                    labels:  lateDeliveriesDataPie.labels,
+                    datasets: [{
+                        label:lateDeliveriesDataPie.keys,
+                        data: lateDeliveriesDataPie.values,
+                        backgroundColor: lateDeliveriesDataPie.backgroundColor,
+                        // borderWidth: lateDeliveriesDataPie.borderWidth
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: 'rgb(255, 99, 132)'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/payment_types')
+        .then(response => response.json())
+        .then(data => {
+            const paymentMethods = Object.keys(data);
+            const paymentPercentage = Object.values(data);
+            var paymentTypesDataPie = {
+                labels: paymentMethods,
+                values: paymentPercentage,
+                backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                ],
+                borderWidth: 1
+                };
+        
+            new Chart(document.getElementById('paymentTypes'), {
+                type: 'pie',
+                data: {
+                    labels:  paymentTypesDataPie.labels,
+                    datasets: [{
+                        data: paymentTypesDataPie.values,
+                        backgroundColor: paymentTypesDataPie.backgroundColor,
+                        borderWidth: paymentTypesDataPie.borderWidth
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Type of Payments'
+                    }
+                    
+                }
+            });
+        });
+});
+
+
+
+    </script>
+
+</body>
+</html>

@@ -71,10 +71,5 @@ class LoadDB:
         category_translation_df = self.transformer.transform_category_translation()
         self.create_sql_table_from_df(self.connection, self.engine, "category_translation", category_translation_df)
 
-        
-
-if __name__ == "__main__":
-    loader = LoadDB()
-    loader.load_all_tables()
 
 
