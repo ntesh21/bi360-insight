@@ -6,7 +6,7 @@
 
 - Download and install Mysql in PC
 - Create mysql user with (username=root password=root)
-- Clone the project (BI360): git clone
+- Clone the project (BI360): `git clone github:https://github.com/ntesh21/bi360-insight`
 - Go to root directory `bi360-insight` and install requirements **pip install -r requirements.txt**
 - Go to database folder in root directory **cd database**
 - Run initialize_warehouse script **python initialize_warehouse.py**
