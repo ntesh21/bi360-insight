@@ -6,7 +6,6 @@
     <title>Orders Analysis</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <!-- <link rel="stylesheet" href="styles.css"> -->
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/orderStyles.css') }}">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -21,36 +20,27 @@
     </header>
 
     <section class="main-content">
-        <div class="container">0
+        <div class="container">
             <div class="charts-container">
                 <div class="chart-container">
-                    <h2>Orders Summary</h2>
-                    <!-- <canvas id="orderSummary" width="400" height="200"> -->
-                        <!-- <ul> -->
-                            {% for key, value in order_summary.items() %}
+                    <h2>Sales Summary</h2>
+                            {% for key, value in sales_summary.items() %}
                             <div class="card">
                                 <strong><h3>{{key}}</h3></strong><br></hr>
                                 {{value}}
+                            
                             </div>
-                            <!-- <li>{{key}}: {{value}}</li> -->
                             {% endfor %}
-                            <!-- <li>Total Orders</ul>
-                            <li>Total Completed Order</ul>
-                            <>Average Order Price</ul>
-                            <ul>Average Frieght Value</ul>
-                            <li>Average Delivery Time</ul> -->
                         </ul>
-                    <!-- </canvas> -->
                 </div>
 
                 <div class="chart-container">
-                    <h2>Orders by Time of Day</h2>
-                    <canvas id="ordersTimeOfDay" width="400" height="300"></canvas>
+                    <h2>City Wise Sellers</h2>
+                    <canvas id="cityWiseSellers" width="400" height="300"></canvas>
                 </div>
-
                 <div class="chart-container">
-                    <h2>Number of Orders per Year</h2>
-                    <canvas id="ordersChart" width="400" height="300"></canvas>
+                    <h2>Payment Types</h2>
+                    <canvas id="paymentTypes" width="400" height="300"></canvas>
                 </div>
 
                 <div class="chart-container">
@@ -58,17 +48,15 @@
                     <canvas id="ordersStatusChart" width="400" height="300"></canvas>
                 </div>
 
-
                 <div class="chart-container">
-                    <h2>Late Deliveries</h2>
-                    <canvas id="lateDeliveries" width="400" height="200"></canvas>
+                    <h2>Top 10 Products sold per category</h2>
+                    <canvas id="topTenCategory" width="400" height="300"></canvas>
                 </div>
-
                 <div class="chart-container">
-                    <h2>Payment Types</h2>
-                    <canvas id="paymentTypes" width="400" height="200"></canvas>
+                    <h2>Bottom 10 Products sold per category</h2>
+                    <canvas id="bottomTenCategory" width="400" height="300"></canvas>
                 </div>
-
+                
                 
             </div>
         </div>
@@ -84,19 +72,36 @@
     <!-- <script src="{{ url_for('static',filename='script.js') }}"> </script> -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-    fetch('/orders_per_year')
+    fetch('/city_wise_sellers')
         .then(response => response.json())
         .then(data => {
-            const years = Object.keys(data);
-            const orders = Object.values(data);
+            const cities = Object.keys(data);
+            const cityCount = Object.values(data);
 
-            new Chart(document.getElementById('ordersChart'), {
+            var cityWiseSellersBar = {
+                labels: cities,
+                values: cityCount,
+                backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(102, 153, 255, 0.5)',
+                'rgba(153, 200, 100, 0.5)',
+                'rgba(153, 102, 150, 0.5)',
+                'rgba(153, 115, 288, 0.5)',
+                'rgba(153, 255, 102, 0.5)',
+                ],
+                borderWidth: 1
+                };
+
+            new Chart(document.getElementById('cityWiseSellers'), {
                 type: 'bar',
                 data: {
-                    labels: years,
+                    labels: cityWiseSellersBar.labels,
                     datasets: [{
-                        label: 'Number of Orders',
-                        data: orders,
+                        label: "City Wise Sellers",
+                        data: cityWiseSellersBar.values,
                         backgroundColor: 'rgba(54, 162, 235, 0.6)',
                         borderColor: 'rgba(54, 162, 235, 1)',
                         borderWidth: 1
@@ -114,20 +119,86 @@
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('/orders_status')
+    fetch('/top_products_sold_per_category')
         .then(response => response.json())
         .then(data => {
-            const status = Object.keys(data);
-            const percentage = Object.values(data);
+            const products = Object.keys(data);
+            const orders = Object.values(data);
 
-            new Chart(document.getElementById('ordersStatusChart'), {
+            var soldPerCategory = {
+                labels: products,
+                values: orders,
+                backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(102, 153, 255, 0.5)',
+                'rgba(153, 200, 100, 0.5)',
+                'rgba(153, 102, 150, 0.5)',
+                'rgba(153, 115, 288, 0.5)',
+                'rgba(153, 255, 102, 0.5)',
+                'rgba(112, 224, 162, 0.5)',
+                ],
+                borderWidth: 1
+                };
+
+            new Chart(document.getElementById('topTenCategory'), {
                 type: 'bar',
                 data: {
-                    labels: status,
+                    labels: soldPerCategory.labels,
                     datasets: [{
-                        label: 'Order Status',
-                        data: percentage,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        label: soldPerCategory.labels,  
+                        data: soldPerCategory.values,
+                        backgroundColor: soldPerCategory.backgroundColor,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/bottom_products_sold_per_category')
+        .then(response => response.json())
+        .then(data => {
+            const bottomProducts = Object.keys(data);
+            const bottomOrders = Object.values(data);
+
+            var bottomSoldPerCategory = {
+                labels: bottomProducts,
+                values: bottomOrders,
+                backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(102, 153, 255, 0.5)',
+                'rgba(153, 200, 100, 0.5)',
+                'rgba(153, 102, 150, 0.5)',
+                'rgba(153, 115, 288, 0.5)',
+                'rgba(153, 255, 102, 0.5)',
+                'rgba(112, 224, 162, 0.5)',
+                ],
+                borderWidth: 1
+                };
+
+            new Chart(document.getElementById('bottomTenCategory'), {
+                type: 'bar',
+                data: {
+                    labels: bottomSoldPerCategory.labels,
+                    datasets: [{
+                        label: bottomSoldPerCategory.labels,
+                        data: bottomSoldPerCategory.values,
+                        backgroundColor: bottomSoldPerCategory.backgroundColor,
                         borderColor: 'rgba(54, 162, 235, 1)',
                         borderWidth: 1
                     }]
