@@ -7,7 +7,6 @@ sys.path.extend([rootdir, parentdir])
 
 from bi360_insight.database.database_connectivity import SQLWrapper
 
-import json
 from datetime import datetime
 import pandas as pd
 import numpy as np
@@ -37,42 +36,14 @@ def get_orders_summary():
     return result
 
 
-def get_order_status():
-    status_df = sql_wrapper.fetch_table_data('order_status_dim')
-    status_df = pd.DataFrame(
-        status_df, 
-        columns=[
-            'order_id',
-            'customer_id',
-            'order_status',
-            'order_purchase_timestamp',
-            'order_approved_at',
-            'order_delivered_carrier_date',
-            'order_delivered_customer_date',
-            'order_estimated_delivery_date'
-            ]
-        )
+def get_order_status(status_df):
     delivery_status = status_df['order_status'].unique()
     order_status = {}
     for ds in delivery_status:
         order_status[ds] = round((len(status_df[status_df['order_status'] == ds])/len(status_df)) * 100, 2)
     return order_status
 
-def get_order_time():
-    order_status_data = sql_wrapper.fetch_table_data('order_status_dim')
-    status_df = pd.DataFrame(
-        order_status_data, 
-        columns=[
-            'order_id',
-            'customer_id',
-            'order_status',
-            'order_purchase_timestamp',
-            'order_approved_at',
-            'order_delivered_carrier_date',
-            'order_delivered_customer_date',
-            'order_estimated_delivery_date'
-            ]
-        )
+def get_order_time(status_df):
     orders_fmt = status_df.copy()
     orders_fmt["order_purchase_timestamp"] = pd.to_datetime(status_df["order_purchase_timestamp"], format='%Y-%m-%d %H:%M:%S')
     orders_fmt["order_delivered_carrier_date"] = pd.to_datetime(status_df["order_delivered_carrier_date"], format='%Y-%m-%d %H:%M:%S')
@@ -88,21 +59,7 @@ def get_order_time():
         order_purchase_time[tm] = len(orders_fmt[orders_fmt['order_purchase_time_day'] == tm])
     return order_purchase_time
 
-def get_late_deliveries():
-    order_status_data = sql_wrapper.fetch_table_data('order_status_dim')
-    status_df = pd.DataFrame(
-        order_status_data, 
-        columns=[
-            'order_id',
-            'customer_id',
-            'order_status',
-            'order_purchase_timestamp',
-            'order_approved_at',
-            'order_delivered_carrier_date',
-            'order_delivered_customer_date',
-            'order_estimated_delivery_date'
-            ]
-        )
+def get_late_deliveries(status_df):
     orders_fmt = status_df.copy()
     orders_fmt["order_purchase_timestamp"] = pd.to_datetime(status_df["order_purchase_timestamp"], format='%Y-%m-%d %H:%M:%S')
     orders_fmt["order_delivered_carrier_date"] = pd.to_datetime(status_df["order_delivered_carrier_date"], format='%Y-%m-%d %H:%M:%S')
@@ -119,25 +76,7 @@ def get_late_deliveries():
         late_delivery_status[str(ld)] = len(orders_fmt[orders_fmt['late_delivery'] == ld])
     return late_delivery_status
 
-def get_payment_types():
-    order_status_data = sql_wrapper.fetch_table_data('order_status_dim')
-    pass
-
-def get_num_orders_per_year():
-    order_status_data = sql_wrapper.fetch_table_data('order_status_dim')
-    status_df = pd.DataFrame(
-        order_status_data, 
-        columns=[
-            'order_id',
-            'customer_id',
-            'order_status',
-            'order_purchase_timestamp',
-            'order_approved_at',
-            'order_delivered_carrier_date',
-            'order_delivered_customer_date',
-            'order_estimated_delivery_date'
-            ]
-        )
+def get_num_orders_per_year(status_df):
     orders_fmt = status_df.copy()
     orders_fmt["order_purchase_timestamp"] = pd.to_datetime(status_df["order_purchase_timestamp"], format='%Y-%m-%d %H:%M:%S')
     orders_fmt['Year'] = orders_fmt['order_purchase_timestamp'].dt.year
@@ -146,70 +85,8 @@ def get_num_orders_per_year():
     for yr in total_years:
         orders_per_year[str(yr)] = len(orders_fmt[orders_fmt['Year'] == yr])
     return orders_per_year
-    # import pdb;pdb.set_trace()
 
-def get_top_states_by_order():
-    customers_data = sql_wrapper.fetch_table_data('customers_dim')
-    order_status_data = sql_wrapper.fetch_table_data('order_status_dim')
-    sellers_data = sql_wrapper.fetch_table_data('sellers_dim')
-    orders_data = sql_wrapper.fetch_table_data('orders_fact')
-    payments_data = sql_wrapper.fetch_table_data('payments_dim')
-    customers_df = pd.DataFrame(
-        customers_data, 
-        columns = [
-            'customer_id',
-            'customer_unique_id',
-            'customer_zip_code_prefix',
-            'customer_city',
-            'customer_state'
-        ]
-    )
-    order_status_df = pd.DataFrame(
-        order_status_data, 
-        columns = [
-            'order_id',
-            'customer_id',
-            'order_status',
-            'order_purchase_timestamp',
-            'order_approved_at',
-            'order_delivered_carrier_date',
-            'order_delivered_customer_date',
-            'order_estimated_delivery_date'
-        ]
-    )
-    sellers_df = pd.DataFrame(
-        sellers_data, 
-        columns=[
-            'seller_id', 
-            'seller_zip_code_prefix', 
-            'seller_city', 
-            'seller_state'
-        ]
-    )
-    orders_df = pd.DataFrame(
-        orders_data, 
-        columns = [
-            'order_id',
-            'order_item_id',
-            'product_id',
-            'seller_id',
-            'shipping_limit_date',
-            'price',
-            'freight_value'
-        ]
-    )
-    payments_df = pd.DataFrame(
-        payments_data, 
-        columns = [
-            'order_id',
-            'payment_sequential',
-            'payment_type',
-            'payment_installments',
-            'payment_value'
-        ]
-    )
-    
-    order_df = order_status_df.merge(orders_df, on='order_id').merge(customers_df, on='customer_id', how='left').merge(sellers_df, on='seller_id', how='left').merge(payments_df, on='order_id', how='left')
+def get_top_states_by_order(order_df):
     top10_state = order_df.groupby('customer_state')\
                                 .agg(num_orders = ('order_id','nunique'),
                                     revenue = ('payment_value', 'sum'))\
@@ -218,13 +95,3 @@ def get_top_states_by_order():
     top10_state = top10_state.iloc[:,0]
     return top10_state.to_dict()
   
-
-
-
-# if __name__ == "__main__":
-    # get_order_time()
-    # get_orders_summary()
-    # get_order_status()
-    # get_late_deliveries()
-    # get_num_orders_per_year()
-    # get_top_states_by_order()

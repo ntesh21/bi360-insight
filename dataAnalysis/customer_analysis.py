@@ -99,13 +99,3 @@ def get_review_vs_rating():
         review_vs_rating[str(lb)] = list(data_cat["label"]).count(lb)
     return review_vs_rating
 
-    # import pdb;pdb.set_trace()
-
-
-
-# if __name__ == '__main__':
-#     get_city_with_highest_customers()
-    # get_customers_segment_by_lifetime()
-    # get_customers_segment_by_rfm()
-    # get_customer_summary()
-    # get_review_vs_rating()

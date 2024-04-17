@@ -1,39 +1,78 @@
 /* Global styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
+    background-color: #f7f4e9;
     margin: 0;
     padding: 0;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
+/* Reset default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-
-.container h1 {
-    margin-right: 20px; /* Adjust margin as needed */
-}
-
+/* Style for the header */
 header {
-    background-color: #333;
-    color: #fff;
-    padding: 20px 0;
-    text-align: center;
+    background-color: #3f6433; /* Dark background color */
+    color: #fff; /* White text color */
+    padding: 20px 0; /* Add some padding */
 }
 
 a {
-    background-color: #333;
-    color: #fff;
-    padding: 20px 0;
-    text-align: center;  
+    text-decoration: none;
 }
 
+/* Container styles */
+.container {
+    width: 80%; /* Width of the container */
+    margin: 0 auto; /* Center the container */
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Space items evenly */
+    align-items: center; /* Center items vertically */
+}
+
+/* Logo styles */
+.logo {
+    color: #fff;
+    text-decoration: none;
+    font-size: 24px; /* Adjust font size */
+    cursor: pointer;
+}
+
+.logo:hover {
+    color: #e7d7a0; 
+}
+
+/* Navigation styles */
+nav ul {
+    list-style-type: none; /* Remove bullet points */
+    display: flex; /* Use flexbox for layout */
+}
+
+nav ul li {
+    margin-right: 20px; /* Add some space between menu items */
+}
+
+nav ul li:last-child {
+    margin-right: 0; /* Remove margin from the last item */
+}
+
+nav ul li a {
+    color: #fff; /* White text color */
+    text-decoration: none; /* Remove underline */
+    font-size: 18px; /* Adjust font size */
+}
+
+nav ul li a:hover {
+    text-decoration: underline; /* Add underline on hover */
+    color: #e7d7a0;
+}
+
+
 footer {
-    background-color: #333;
+    background-color: #3f6433;
     color: #fff;
     padding: 20px 0;
     text-align: center;
@@ -56,14 +95,14 @@ footer p {
 .chart-container {
     width: 48%;
     margin-bottom: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #e4e5e6;
+    box-shadow: 0 2px 4px rgba(223, 203, 149, 0.1);
     border-radius: 8px;
     overflow: hidden;
 }
 
 .chart-container h2 {
-    background-color: #333;
+    background-color: #a1be37;
     color: #fff;
     padding: 10px;
     margin: 0;
