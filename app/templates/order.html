@@ -15,13 +15,14 @@
     <header>
         <div class="container">
             <h1><a href="/">Home</a></h1>
+            <h1><a href="{{ url_for('customers_analysis') }}">Customer Analysis</a></h1>
             <h1><a href="{{ url_for('orders_analysis') }}">Order Analysis</a></h1>
             <h1><a href="{{ url_for('sales_analysis') }}">Sales Analysis</a></h1>
         </div>
     </header>
 
     <section class="main-content">
-        <div class="container">0
+        <div class="container">
             <div class="charts-container">
                 <div class="chart-container">
                     <h2>Orders Summary</h2>
@@ -61,12 +62,12 @@
 
                 <div class="chart-container">
                     <h2>Late Deliveries</h2>
-                    <canvas id="lateDeliveries" width="400" height="200"></canvas>
+                    <canvas id="lateDeliveries" width="400" height="300"></canvas>
                 </div>
 
                 <div class="chart-container">
-                    <h2>Payment Types</h2>
-                    <canvas id="paymentTypes" width="400" height="200"></canvas>
+                    <h2>Top 10 States by Number of Orders</h2>
+                    <canvas id="topOrderStates" width="400" height="300"></canvas>
                 </div>
 
                 
@@ -219,32 +220,40 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('/payment_types')
+    fetch('/top_states_by_order')
         .then(response => response.json())
         .then(data => {
-            const paymentMethods = Object.keys(data);
-            const paymentPercentage = Object.values(data);
-            var paymentTypesDataPie = {
-                labels: paymentMethods,
-                values: paymentPercentage,
+            const topStates = Object.keys(data);
+            const topOrders = Object.values(data);
+
+            var topStatesOrders = {
+                labels: topStates,
+                values: topOrders,
                 backgroundColor: [
                 'rgba(255, 99, 132, 0.5)',
                 'rgba(54, 162, 235, 0.5)',
                 'rgba(255, 206, 86, 0.5)',
                 'rgba(75, 192, 192, 0.5)',
-                'rgba(153, 102, 255, 0.5)',
+                'rgba(102, 153, 255, 0.5)',
+                'rgba(153, 200, 100, 0.5)',
+                'rgba(153, 102, 150, 0.5)',
+                'rgba(153, 115, 288, 0.5)',
+                'rgba(153, 255, 102, 0.5)',
+                'rgba(112, 224, 162, 0.5)',
                 ],
                 borderWidth: 1
                 };
-        
-            new Chart(document.getElementById('paymentTypes'), {
-                type: 'pie',
+
+            new Chart(document.getElementById('topOrderStates'), {
+                type: 'bar',
                 data: {
-                    labels:  paymentTypesDataPie.labels,
+                    labels: topStatesOrders.labels,
                     datasets: [{
-                        data: paymentTypesDataPie.values,
-                        backgroundColor: paymentTypesDataPie.backgroundColor,
-                        borderWidth: paymentTypesDataPie.borderWidth
+                        label: topStatesOrders.labels,
+                        data: topStatesOrders.values,
+                        backgroundColor: topStatesOrders.backgroundColor,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
                     }]
                 },
                 options: {
@@ -252,12 +261,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         y: {
                             beginAtZero: true
                         }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Type of Payments'
                     }
-                    
                 }
             });
         });

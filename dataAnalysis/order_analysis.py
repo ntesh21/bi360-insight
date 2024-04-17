@@ -148,6 +148,76 @@ def get_num_orders_per_year():
     return orders_per_year
     # import pdb;pdb.set_trace()
 
+def get_top_states_by_order():
+    customers_data = sql_wrapper.fetch_table_data('customers_dim')
+    order_status_data = sql_wrapper.fetch_table_data('order_status_dim')
+    sellers_data = sql_wrapper.fetch_table_data('sellers_dim')
+    orders_data = sql_wrapper.fetch_table_data('orders_fact')
+    payments_data = sql_wrapper.fetch_table_data('payments_dim')
+    customers_df = pd.DataFrame(
+        customers_data, 
+        columns = [
+            'customer_id',
+            'customer_unique_id',
+            'customer_zip_code_prefix',
+            'customer_city',
+            'customer_state'
+        ]
+    )
+    order_status_df = pd.DataFrame(
+        order_status_data, 
+        columns = [
+            'order_id',
+            'customer_id',
+            'order_status',
+            'order_purchase_timestamp',
+            'order_approved_at',
+            'order_delivered_carrier_date',
+            'order_delivered_customer_date',
+            'order_estimated_delivery_date'
+        ]
+    )
+    sellers_df = pd.DataFrame(
+        sellers_data, 
+        columns=[
+            'seller_id', 
+            'seller_zip_code_prefix', 
+            'seller_city', 
+            'seller_state'
+        ]
+    )
+    orders_df = pd.DataFrame(
+        orders_data, 
+        columns = [
+            'order_id',
+            'order_item_id',
+            'product_id',
+            'seller_id',
+            'shipping_limit_date',
+            'price',
+            'freight_value'
+        ]
+    )
+    payments_df = pd.DataFrame(
+        payments_data, 
+        columns = [
+            'order_id',
+            'payment_sequential',
+            'payment_type',
+            'payment_installments',
+            'payment_value'
+        ]
+    )
+    
+    order_df = order_status_df.merge(orders_df, on='order_id').merge(customers_df, on='customer_id', how='left').merge(sellers_df, on='seller_id', how='left').merge(payments_df, on='order_id', how='left')
+    top10_state = order_df.groupby('customer_state')\
+                                .agg(num_orders = ('order_id','nunique'),
+                                    revenue = ('payment_value', 'sum'))\
+                                .sort_values('revenue', ascending=False)[:10]
+    top10_state = top10_state[['num_orders']]
+    top10_state = top10_state.iloc[:,0]
+    return top10_state.to_dict()
+  
 
 
 
@@ -157,3 +227,4 @@ def get_num_orders_per_year():
     # get_order_status()
     # get_late_deliveries()
     # get_num_orders_per_year()
+    # get_top_states_by_order()
